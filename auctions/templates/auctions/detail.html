@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if listing.url %}
+        <br>
+        <img src="{{ listing.url }}" alt="{{ listing.title }}" style="width: auto; height: 200px;">
+    {% endif %}
+    <h2>{{ listing.title }}</h2>
+    <br>
+    Description: {{ listing.description }}
+    <br>
+    Price: ${{ listing.price }}
+    <br>
+    Posted by: {{ listing.user }}
+    <p style="color: grey;">Created {{ listing.time }}</p>
+    {% if user.is_authenticated %}
+        {% if is_watchlisted %}
+            <a href=""><button>Remove from Watchlist</button></a>
+        {% else %}
+            <a href="{% url 'watchlist_add' user.id listing.id %}"><button>★ Add the item to your Watchlist</button></a>
+        {% endif %}   
+    {% endif %}
+{% endblock %}

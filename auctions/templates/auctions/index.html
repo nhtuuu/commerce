@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    <ul style="list-style: none;">
+        {% for listing in listings %}
+            <li style="border: 1px solid grey; width: 40%;"> 
+                <a href="{% url 'listing_detail' listing.id %}"><strong>{{ listing.title }}</strong></a>
+                <br>
+                Description: {{ listing.description }}
+                <br>
+                Price: ${{ listing.price }}
+                <br>
+                Posted by: {{ listing.user }}
+                {% if listing.url %}
+                    <br>
+                    <img src="{{ listing.url }}" alt="{{ listing.title }}" style="width: auto; height: 200px;">
+                {% endif %}
+                <p style="color: grey;">Created {{ listing.time }}</p>
+            </li>
+            <br>
+        {% endfor %}
+        </ul>
+{% endblock %}
