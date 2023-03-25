@@ -9,7 +9,7 @@
                 <br>
                 Description: {{ listing.description }}
                 <br>
-                Price: ${{ listing.price }}
+                Price: {{ listing.formatted_price }}
                 <br>
                 Posted by: {{ listing.user }}
                 {% if listing.url %}
@@ -20,5 +20,5 @@
             </li>
             <br>
         {% endfor %}
-        </ul>
+    </ul>
 {% endblock %}

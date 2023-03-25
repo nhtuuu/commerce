@@ -2,22 +2,23 @@
 
 {% block body %}
     <h2>Watchlist</h2>
-
-    {% for item in watchlist %}
-        <li style="border: 1px solid grey; width: 40%;"> 
-                <a href="{% url 'listing_detail' item.item.id %}"><strong>{{ item.item.title }}</strong></a>
-                <br>
-                Description: {{ item.item.description }}
-                <br>
-                Price: ${{ item.item.price }}
-                <br>
-                Posted by: {{ item.item.user }}
-                {% if item.item.url %}
+    <ul style="list-style: none;">
+        {% for item in watchlist %}
+            <li style="border: 1px solid grey; width: 40%;"> 
+                    <a href="{% url 'listing_detail' item.item.id %}"><strong>{{ item.item.title }}</strong></a>
                     <br>
-                    <img src="{{ item.item.url }}" alt="{{ item.item.title }}" style="width: auto; height: 200px;">
-                {% endif %}
-                <p style="color: grey;">Created {{ item.item.time }}</p>
-            </li>
-            <br>
-    {% endfor %}
+                    Description: {{ item.item.description }}
+                    <br>
+                    Price: {{ item.item.formatted_price }}
+                    <br>
+                    Posted by: {{ item.item.user }}
+                    {% if item.item.url %}
+                        <br>
+                        <img src="{{ item.item.url }}" alt="{{ item.item.title }}" style="width: auto; height: 200px;">
+                    {% endif %}
+                    <p style="color: grey;">Created {{ item.item.time }}</p>
+                </li>
+                <br>
+        {% endfor %}
+    </ul>
 {% endblock %}

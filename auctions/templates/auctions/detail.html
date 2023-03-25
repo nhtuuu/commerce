@@ -1,23 +1,84 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <style>
+        #comment {
+            margin-left: 30%;
+        }
+    </style>
     {% if listing.url %}
         <br>
         <img src="{{ listing.url }}" alt="{{ listing.title }}" style="width: auto; height: 200px;">
     {% endif %}
-    <h2>{{ listing.title }}</h2>
+        <br>
+    <h2><strong>{{ listing.title }}</strong></h2>
+    <br>
+    <h3><strong></strong>Price: {{ listing.formatted_price }}</strong></h3>
     <br>
     Description: {{ listing.description }}
     <br>
-    Price: ${{ listing.price }}
-    <br>
     Posted by: {{ listing.user }}
     <p style="color: grey;">Created {{ listing.time }}</p>
+    {% if listing.active %}
+        {% if user.is_authenticated %}
+                <form action="{% url 'bid' user.id listing.id %}" method="POST" name="bid" id="bid">
+                    {% csrf_token %}
+                    <p style="display: inline"><strong>$</strong></p><input style="display: inline" type="number" min="0" step="0.01" placeholder="Bid" name="amount" id="amount">
+                    <input type="submit" name="submit" id="submit">
+                </form>
+                {% if request.POST and amount == "" %}
+                    <div class="errorlist">
+                        <p style="color: red;">Please enter a bid.</p>
+                    </div>
+                {% endif %}
+                {% if request.POST and error %}
+                    <p style="color: red;">Your bid must higher than the highest bid</p>
+                {%  endif %}
+                {% if request.POST and lower_than_price %}
+                    <p style="color: red;">Your bid must higher than the starting bid</p>
+                {%  endif %}
+                <br>
+                {% for bid in all_bid %}
+                    <ul>
+                        <li>Bid #{{ bid.id }}: {{ bid.formatted_amount }} by {{ bid.bidder }} - {{ bid.time }}</li>
+                    </ul>
+                {% endfor %}
+                {% if legit_owner %}
+                    <a href="{% url 'close' listing.id %}"><button>Close the auction</button></a>
+                {% endif %}
+        {% endif %}
+    {% endif %}
     {% if user.is_authenticated %}
         {% if is_watchlisted %}
-            <a href=""><button>Remove from Watchlist</button></a>
+            <a href="{% url 'watchlist_remove' listing.id %}"><button>Remove the item from your Watchlist</button></a>
         {% else %}
-            <a href="{% url 'watchlist_add' user.id listing.id %}"><button>★ Add the item to your Watchlist</button></a>
-        {% endif %}   
+            <a href="{% url 'watchlist_add' listing.id %}"><button>★ Add the item to your Watchlist</button></a>
+        {% endif %}
     {% endif %}
+    <br>
+    <br>
+    {% if not listing.active and winner_id is not None %}
+        <h3>The listing was closed. {{ winner.username }} is the winner.</h3>
+    {% endif %}
+    {% if not listing.active and winner_id is None %}
+        <h3>The listing was closed.</h3>
+    {% endif %}
+    <hr>
+    <h3>Comments</h3>
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'comment' listing.id %}" name="comment">
+            {% csrf_token %}
+            <table>
+                {{ form.as_table }}
+            </table>
+            <input type="submit" name="submit" id="comment">
+        </form>
+    {% endif %}
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <p>{{ comment }} - {{ comment.time }}</p>
+        </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
